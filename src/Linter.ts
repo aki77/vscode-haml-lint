@@ -5,7 +5,9 @@ import {
   DiagnosticSeverity,
   languages,
   TextDocument,
-  workspace
+  workspace,
+  Range,
+  Position
 } from "vscode";
 
 const REGEX = /.+?:(\d+) \[(W|E)] (\w+): (.+)/g;
@@ -55,7 +57,11 @@ export default class Linter {
       return;
     }
 
-    this.process = execa("haml-lint", [document.uri.fsPath], {
+    const executablePath = workspace.getConfiguration("hamlLint")
+      .executablePath;
+    const [command, ...args] = executablePath.split(/\s+/);
+
+    this.process = execa(command, [...args, document.uri.fsPath], {
       cwd: workspaceFolder.uri.fsPath,
       reject: false
     });
@@ -86,12 +92,18 @@ export default class Linter {
       const line = Number.parseInt(match[1], 10) - 1;
       const ruleName = match[3];
       const message = match[4];
+      const lineText = document.lineAt(line);
+      const lineTextRange = lineText.range;
+      const range = new Range(
+        new Position(
+          lineTextRange.start.line,
+          lineText.firstNonWhitespaceCharacterIndex
+        ),
+        lineTextRange.end
+      );
+
       diagnostics.push(
-        new Diagnostic(
-          document.lineAt(line).range,
-          `${ruleName}: ${message}`,
-          severity
-        )
+        new Diagnostic(range, `${ruleName}: ${message}`, severity)
       );
       match = REGEX.exec(output);
     }

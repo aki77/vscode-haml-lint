@@ -1,15 +1,24 @@
 {
   "name": "haml-lint",
   "displayName": "Haml Lint",
-  "description": "",
+  "description": "Haml Lint for Visual Studio Code",
   "version": "0.0.1",
   "publisher": "aki77",
+  "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.25.0"
   },
   "categories": [
-    "Other"
+    "Linters"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aki77/vscode-haml-lint.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aki77/vscode-haml-lint/issues"
+  },
+  "license": "MIT",
   "activationEvents": [
     "onLanguage:haml"
   ],
@@ -19,10 +28,10 @@
       "type": "object",
       "title": "Haml Lint Configuration",
       "properties": {
-        "hamlLint.debounceTime": {
-          "type": "number",
-          "default": 1000,
-          "description": "Time (ms) to wait after keypress before running enabled linters. Ensures linters are only run when typing has finished and not for every keypress"
+        "hamlLint.executablePath": {
+          "type": "string",
+          "default": "haml-lint",
+          "description": "Path to haml-lint executable"
         }
       }
     }
@@ -36,7 +45,6 @@
   },
   "devDependencies": {
     "@types/execa": "^0.9.0",
-    "@types/lodash": "^4.14.110",
     "@types/mocha": "^2.2.42",
     "@types/node": "^7.0.43",
     "tslint": "^5.8.0",
@@ -44,7 +52,6 @@
     "vscode": "^1.1.6"
   },
   "dependencies": {
-    "execa": "^0.10.0",
-    "lodash": "^4.17.10"
+    "execa": "^0.10.0"
   }
 }

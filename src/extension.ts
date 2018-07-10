@@ -3,8 +3,6 @@
 import * as vscode from "vscode";
 import Linter from "./Linter";
 
-const debounce = require("lodash/debounce");
-
 export function activate(context: vscode.ExtensionContext) {
   const linter = new Linter();
   context.subscriptions.push(linter);
@@ -12,9 +10,6 @@ export function activate(context: vscode.ExtensionContext) {
   const updateDiagnostics = (document: vscode.TextDocument) => {
     linter.run(document);
   };
-  const debounceTime = vscode.workspace.getConfiguration("hamlLint")
-    .debounceTime;
-  const debouncedUpdateDiagnostics = debounce(updateDiagnostics, debounceTime);
 
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument(updateDiagnostics)
