@@ -16,7 +16,10 @@ export default class Linter {
   private collection: DiagnosticCollection = languages.createDiagnosticCollection(
     "haml-lint"
   );
-  private process: execa.ExecaChildProcess | null = null;
+  private processes: WeakMap<
+    TextDocument,
+    execa.ExecaChildProcess
+  > = new WeakMap();
 
   /**
    * dispose
@@ -47,9 +50,9 @@ export default class Linter {
 
   private async lint(document: TextDocument) {
     const text = document.getText();
-
-    if (this.process) {
-      this.process.kill();
+    const oldProcess = this.processes.get(document);
+    if (oldProcess) {
+      oldProcess.kill();
     }
 
     const workspaceFolder = workspace.getWorkspaceFolder(document.uri);
@@ -60,13 +63,15 @@ export default class Linter {
     const executablePath = workspace.getConfiguration("hamlLint")
       .executablePath;
     const [command, ...args] = executablePath.split(/\s+/);
-
-    this.process = execa(command, [...args, document.uri.fsPath], {
+    const process = execa(command, [...args, document.uri.fsPath], {
       cwd: workspaceFolder.uri.fsPath,
       reject: false
     });
 
-    const { code, stdout } = await this.process;
+    this.processes.set(document, process);
+    const { code, stdout } = await process;
+    this.processes.delete(document);
+
     // NOTE: The file was modified since the request was sent to check it.
     if (text !== document.getText()) {
       return;
