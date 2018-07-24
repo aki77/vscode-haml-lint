@@ -94,7 +94,8 @@ export default class Linter {
         match[2] === "W"
           ? DiagnosticSeverity.Warning
           : DiagnosticSeverity.Error;
-      const line = Number.parseInt(match[1], 10) - 1;
+      // NOTE: https://github.com/aki77/vscode-haml-lint/issues/1
+      const line = Math.max(Number.parseInt(match[1], 10) - 1, 0);
       const ruleName = match[3];
       const message = match[4];
       const lineText = document.lineAt(line);
