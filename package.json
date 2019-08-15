@@ -26,12 +26,17 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "Haml Lint Configuration",
+      "title": "Haml Lint",
       "properties": {
         "hamlLint.executablePath": {
           "type": "string",
           "default": "haml-lint",
           "description": "Path to haml-lint executable"
+        },
+        "hamlLint.useBundler": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use `bundle exec` to run haml-lint. (If this is true, the hamlLint.executablePath setting is ignored.)"
         }
       }
     }

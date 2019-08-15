@@ -60,16 +60,18 @@ export default class Linter {
       return;
     }
 
-    const executablePath = workspace.getConfiguration("hamlLint")
-      .executablePath;
-    const [command, ...args] = executablePath.split(/\s+/);
-    const process = execa(command, [...args, document.uri.fsPath], {
+    const config = workspace.getConfiguration("hamlLint");
+    const command = config.useBundler
+      ? `bundle exec haml-lint ${document.uri.fsPath}`
+      : `${config.executablePath} ${document.uri.fsPath}`;
+
+    const process = execa.command(command, {
       cwd: workspaceFolder.uri.fsPath,
       reject: false
     });
 
     this.processes.set(document, process);
-    const { code, stdout } = await process;
+    const { exitCode, stdout } = await process;
     this.processes.delete(document);
 
     // NOTE: The file was modified since the request was sent to check it.
@@ -78,7 +80,7 @@ export default class Linter {
     }
 
     this.collection.delete(document.uri);
-    if (code === 0) {
+    if (exitCode === 0) {
       return;
     }
 

@@ -3,6 +3,7 @@
 ## 0.1.0
 
 - Update dependencies
+- Add `useBundler` setting
 
 ## 0.0.3
 
