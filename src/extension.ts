@@ -2,6 +2,7 @@
 
 import * as vscode from "vscode";
 import Linter from "./Linter";
+import { QuickFixProvider } from "./QuickFixProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   const linter = new Linter();
@@ -23,6 +24,16 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidCloseTextDocument(document => {
       linter.clear(document);
     })
+  );
+
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(
+      "haml",
+      new QuickFixProvider(),
+      {
+        providedCodeActionKinds: [vscode.CodeActionKind.QuickFix]
+      }
+    )
   );
 
   vscode.workspace.textDocuments.forEach(updateDiagnostics);

@@ -5,6 +5,7 @@
 - Update dependencies
 - Add `useBundler` setting
 - Use `--reporter json` option
+- Add CodeActionProvider
 
 ## 0.0.3
 

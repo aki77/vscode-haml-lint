@@ -24,6 +24,8 @@ type File = {
   offenses: Offence[];
 };
 
+export const CODE = "haml-lint";
+
 export default class Linter {
   private collection: DiagnosticCollection = languages.createDiagnosticCollection(
     "haml-lint"
@@ -113,11 +115,13 @@ export default class Linter {
           ? DiagnosticSeverity.Warning
           : DiagnosticSeverity.Error;
 
-      return new Diagnostic(
+      const diagnostic = new Diagnostic(
         range,
         `${offence.linter_name}: ${offence.message}`,
         severity
       );
+      diagnostic.code = CODE;
+      return diagnostic;
     });
   }
 }
