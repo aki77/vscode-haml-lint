@@ -4,6 +4,7 @@
 
 - Update dependencies
 - Add `useBundler` setting
+- Use `--reporter json` option
 
 ## 0.0.3
 

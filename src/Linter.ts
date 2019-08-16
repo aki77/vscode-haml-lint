@@ -10,7 +10,19 @@ import {
   Position
 } from "vscode";
 
-const REGEX = /.+?:(\d+) \[(W|E)] (\w+): (.+)/g;
+type Offence = {
+  linter_name: string;
+  location: {
+    line: number;
+  };
+  message: string;
+  severity: string;
+};
+
+type File = {
+  path: string;
+  offenses: Offence[];
+};
 
 export default class Linter {
   private collection: DiagnosticCollection = languages.createDiagnosticCollection(
@@ -21,16 +33,10 @@ export default class Linter {
     execa.ExecaChildProcess
   > = new WeakMap();
 
-  /**
-   * dispose
-   */
   public dispose() {
     this.collection.dispose();
   }
 
-  /**
-   * run
-   */
   public run(document: TextDocument) {
     if (document.languageId !== "haml") {
       return;
@@ -39,9 +45,6 @@ export default class Linter {
     this.lint(document);
   }
 
-  /**
-   * clear
-   */
   public clear(document: TextDocument) {
     if (document.uri.scheme === "file") {
       this.collection.delete(document.uri);
@@ -61,9 +64,10 @@ export default class Linter {
     }
 
     const config = workspace.getConfiguration("hamlLint");
+    const args = `--reporter json ${document.uri.fsPath}`;
     const command = config.useBundler
-      ? `bundle exec haml-lint ${document.uri.fsPath}`
-      : `${config.executablePath} ${document.uri.fsPath}`;
+      ? `bundle exec haml-lint ${args}`
+      : `${config.executablePath} ${args}`;
 
     const process = execa.command(command, {
       cwd: workspaceFolder.uri.fsPath,
@@ -88,18 +92,13 @@ export default class Linter {
   }
 
   private parse(output: string, document: TextDocument): Diagnostic[] {
-    const diagnostics = [];
+    const json = JSON.parse(output) as { files: File[] };
+    if (json.files.length < 1) {
+      return [];
+    }
 
-    let match = REGEX.exec(output);
-    while (match !== null) {
-      const severity =
-        match[2] === "W"
-          ? DiagnosticSeverity.Warning
-          : DiagnosticSeverity.Error;
-      // NOTE: https://github.com/aki77/vscode-haml-lint/issues/1
-      const line = Math.max(Number.parseInt(match[1], 10) - 1, 0);
-      const ruleName = match[3];
-      const message = match[4];
+    return json.files[0].offenses.map(offence => {
+      const line = Math.max(offence.location.line - 1, 0);
       const lineText = document.lineAt(line);
       const lineTextRange = lineText.range;
       const range = new Range(
@@ -109,13 +108,16 @@ export default class Linter {
         ),
         lineTextRange.end
       );
+      const severity =
+        offence.severity === "warning"
+          ? DiagnosticSeverity.Warning
+          : DiagnosticSeverity.Error;
 
-      diagnostics.push(
-        new Diagnostic(range, `${ruleName}: ${message}`, severity)
+      return new Diagnostic(
+        range,
+        `${offence.linter_name}: ${offence.message}`,
+        severity
       );
-      match = REGEX.exec(output);
-    }
-
-    return diagnostics;
+    });
   }
 }
