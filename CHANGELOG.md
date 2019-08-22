@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.1
+
+- Fix error handling
+
 ## 0.1.0
 
 - Update dependencies

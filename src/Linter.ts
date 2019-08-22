@@ -77,7 +77,7 @@ export default class Linter {
     });
 
     this.processes.set(document, process);
-    const { exitCode, stdout } = await process;
+    const { exitCode, stdout, stderr } = await process;
     this.processes.delete(document);
 
     // NOTE: The file was modified since the request was sent to check it.
@@ -87,6 +87,11 @@ export default class Linter {
 
     this.collection.delete(document.uri);
     if (exitCode === 0) {
+      return;
+    }
+
+    if (stdout.length === 0 && stderr.length > 0) {
+      console.error(stderr);
       return;
     }
 
