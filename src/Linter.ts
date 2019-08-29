@@ -90,7 +90,7 @@ export default class Linter {
       return;
     }
 
-    if (stdout.length === 0 && stderr.length > 0) {
+    if (exitCode === 1 && stderr.length > 0) {
       console.error(stderr);
       return;
     }
