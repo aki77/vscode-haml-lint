@@ -40,7 +40,7 @@ export class QuickFixProvider implements CodeActionProvider {
       // TODO: Support for RuboCop
       .filter(linterName => linterName !== "RuboCop")
       .join(", ");
-    const fix = new CodeAction("Disalbe linters", CodeActionKind.QuickFix);
+    const fix = new CodeAction("Disable linters", CodeActionKind.QuickFix);
     fix.edit = new WorkspaceEdit();
     fix.edit.insert(
       document.uri,
