@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.3
+
+- Fix typo
+
 ## 0.1.2
 
 - Fix error handling
