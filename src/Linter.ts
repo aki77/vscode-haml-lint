@@ -11,6 +11,7 @@ import {
 } from "vscode";
 
 type Offence = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   linter_name: string;
   location: {
     line: number;
