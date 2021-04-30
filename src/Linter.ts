@@ -25,7 +25,7 @@ type File = {
   offenses: Offence[];
 };
 
-export const CODE = "haml-lint";
+export const SOURCE = "haml-lint";
 
 export default class Linter {
   private collection: DiagnosticCollection = languages.createDiagnosticCollection(
@@ -123,10 +123,11 @@ export default class Linter {
 
       const diagnostic = new Diagnostic(
         range,
-        `${offence.linter_name}: ${offence.message}`,
+        offence.message,
         severity
       );
-      diagnostic.code = CODE;
+      diagnostic.code = offence.linter_name;
+      diagnostic.source = SOURCE;
       return diagnostic;
     });
   }

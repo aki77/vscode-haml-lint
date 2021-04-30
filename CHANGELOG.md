@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.0
+
+- Update dependencies
+- Set Diagnostic source
+
 ## 0.1.4
 
 - Fix typo

@@ -12,7 +12,7 @@ import {
   WorkspaceEdit,
   Position
 } from "vscode";
-import { CODE } from "./Linter";
+import { SOURCE } from "./Linter";
 
 export class QuickFixProvider implements CodeActionProvider {
   provideCodeActions(
@@ -23,7 +23,7 @@ export class QuickFixProvider implements CodeActionProvider {
   ): CodeAction[] {
     const warnings = context.diagnostics.filter(
       diagnostic =>
-        diagnostic.code === CODE &&
+        diagnostic.source === SOURCE &&
         diagnostic.severity === DiagnosticSeverity.Warning
     );
     return warnings.length > 0 ? [this.createFix(document, warnings)] : [];
@@ -34,11 +34,9 @@ export class QuickFixProvider implements CodeActionProvider {
     diagnostics: Diagnostic[]
   ): CodeAction {
     const linterNames = diagnostics
-      .map(diagnostic => {
-        return diagnostic.message.split(":", 2)[0];
-      })
+      .map(({ code }) => code)
       // TODO: Support for RuboCop
-      .filter(linterName => linterName !== "RuboCop")
+      .filter((code) => code !== "RuboCop")
       .join(", ");
     const fix = new CodeAction("Disable linters", CodeActionKind.QuickFix);
     fix.edit = new WorkspaceEdit();
