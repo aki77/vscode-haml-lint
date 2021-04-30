@@ -4,6 +4,7 @@
 
 - Update dependencies
 - Set Diagnostic source
+- Support for QuickFix rubocop rule
 
 ## 0.1.4
 
