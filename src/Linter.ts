@@ -67,10 +67,13 @@ export default class Linter {
     }
 
     const config = workspace.getConfiguration("hamlLint");
-    const args = `--reporter json ${document.uri.fsPath}`;
+    const args = [`--reporter json ${document.uri.fsPath}`];
+    if (config.extraArgs) {
+      args.push(config.extraArgs);
+    }
     const command = config.useBundler
-      ? `bundle exec haml-lint ${args}`
-      : `${config.executablePath} ${args}`;
+      ? `bundle exec haml-lint ${args.join(' ')}`
+      : `${config.executablePath} ${args.join(' ')}`;
 
     const process = execa.command(command, {
       cwd: workspaceFolder.uri.fsPath,

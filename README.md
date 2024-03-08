@@ -10,3 +10,4 @@ Haml Lint for Visual Studio Code.
 
 - `hamlLint.executablePath`: Path to haml-lint executable (default: `haml-lint`)
 - `hamlLint.useBundler`: Use `bundle exec` to run haml-lint. If this is true, the hamlLint.executablePath setting is ignored. (default: `false`)
+- `hamlLint.extraArgs`: Provide additional arguments to haml-lint. Example: '-a' to enable safe auto-corrections, or '-A' to auto-correct all offenses.
