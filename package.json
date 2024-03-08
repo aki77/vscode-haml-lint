@@ -37,6 +37,11 @@
           "type": "boolean",
           "default": false,
           "description": "Use `bundle exec` to run haml-lint. (If this is true, the hamlLint.executablePath setting is ignored.)"
+        },
+        "hamlLint.extraArgs": {
+          "type": "string",
+          "default": "",
+          "description": "Provide additional arguments to haml-lint. Example: '-a' to enable safe auto-corrections, or '-A' to auto-correct all offenses."
         }
       }
     }
